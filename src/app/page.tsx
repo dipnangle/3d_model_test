@@ -14,10 +14,6 @@ const ModelViewer = dynamic(() => import("../components/ModelViewer"), {
 });
 
 const MODELS = [
-  { id: "ring_for_perfume.glb", name: "Perfume Ring (GLB)", type: "glb" },
-  { id: "kosue4554-ring-4772.glb", name: "Diamond Ring (GLB)", type: "glb" },
-  { id: "QIEZPD0257-FINAL.stl", name: "Band Style A (STL)", type: "stl" },
-  { id: "QIEZPE0257-FINAL.stl", name: "Band Style B (STL)", type: "stl" },
   { id: "QIEZPR0257 - US-7-FINAL.stl", name: "Band Style C (STL)", type: "stl" },
 ];
 
@@ -35,7 +31,7 @@ const FINISHES = [
 ];
 
 export default function Home() {
-  const [activeModel, setActiveModel] = useState("ring_for_perfume.glb");
+  const [activeModel, setActiveModel] = useState("QIEZPR0257 - US-7-FINAL.stl");
   const [mounted, setMounted] = useState(false);
   const [color, setColor] = useState("#d4af37");
   const [finish, setFinish] = useState("polished");

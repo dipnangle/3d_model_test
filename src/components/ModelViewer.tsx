@@ -12,9 +12,7 @@ import {
 import * as THREE from "three";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 
-// Preload standard models to speed up initial load
-useGLTF.preload("/ring_for_perfume.glb");
-useGLTF.preload("/kosue4554-ring-4772.glb");
+// No preloads of heavy unused GLTF models to keep initial load fast
 
 interface GltfModelProps {
   url: string;
