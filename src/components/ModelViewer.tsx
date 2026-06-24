@@ -263,14 +263,7 @@ export default function ModelViewer({
   const modelUrl = modelName.startsWith("/") ? modelName : `/${modelName}`;
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        minHeight: "550px",
-        position: "relative",
-      }}
-    >
+    <div className="model-viewer-wrapper">
       <WebGLErrorBoundary>
         <Canvas
           shadows
