@@ -8,6 +8,7 @@ import {
   ContactShadows,
   useGLTF,
   Html,
+  useProgress,
 } from "@react-three/drei";
 import * as THREE from "three";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
@@ -148,9 +149,79 @@ function Model({ url, color, roughness, metalness }: ModelProps) {
 }
 
 function Loader() {
+  const { progress } = useProgress();
+  const roundedProgress = Math.round(progress);
+
   return (
     <Html center>
-      <div className="loading-text">Loading 3D Model...</div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "rgba(10, 10, 10, 0.8)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          padding: "1.5rem 2rem",
+          borderRadius: "20px",
+          backdropFilter: "blur(12px)",
+          minWidth: "220px",
+          color: "#fff",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+          textAlign: "center",
+        }}
+      >
+        <span
+          style={{
+            fontSize: "0.8rem",
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
+            color: "#a0a0a0",
+            marginBottom: "0.75rem",
+            fontWeight: "600",
+          }}
+        >
+          Loading 3D Mesh
+        </span>
+        
+        {/* Dynamic percentage counter */}
+        <span
+          style={{
+            fontSize: "2.5rem",
+            fontWeight: "800",
+            background: "linear-gradient(to right, #ffffff, #a0a0a0)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            marginBottom: "1rem",
+            lineHeight: 1,
+          }}
+        >
+          {roundedProgress}%
+        </span>
+        
+        {/* Progress Bar Container */}
+        <div
+          style={{
+            width: "100%",
+            height: "4px",
+            background: "rgba(255, 255, 255, 0.1)",
+            borderRadius: "2px",
+            overflow: "hidden",
+            position: "relative",
+          }}
+        >
+          {/* Animated progress bar fill */}
+          <div
+            style={{
+              width: `${roundedProgress}%`,
+              height: "100%",
+              background: "linear-gradient(90deg, #6d28d9 0%, #a78bfa 100%)",
+              boxShadow: "0 0 8px rgba(109, 40, 217, 0.8)",
+              transition: "width 0.2s ease-out",
+            }}
+          />
+        </div>
+      </div>
     </Html>
   );
 }
