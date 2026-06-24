@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useRef } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import {
   OrbitControls,
@@ -15,13 +15,9 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 
 // No preloads of heavy unused GLTF models to keep initial load fast
 
-interface GltfModelProps {
-  url: string;
-}
-
-function GltfModel({ url }: GltfModelProps) {
+function GltfModel({ url }) {
   const { scene } = useGLTF(url);
-  const modelRef = useRef<THREE.Group>(null);
+  const modelRef = useRef(null);
 
   useEffect(() => {
     if (!scene) return;
@@ -49,7 +45,7 @@ function GltfModel({ url }: GltfModelProps) {
     }
 
     scene.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
+      if (child.isMesh) {
         child.castShadow = true;
         child.receiveShadow = true;
       }
@@ -69,21 +65,14 @@ function GltfModel({ url }: GltfModelProps) {
   );
 }
 
-interface StlModelProps {
-  url: string;
-  color?: string;
-  roughness?: number;
-  metalness?: number;
-}
-
 function StlModel({
   url,
   color = "#d4af37",
   roughness = 0.15,
   metalness = 0.9,
-}: StlModelProps) {
+}) {
   const geometry = useLoader(STLLoader, url);
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef(null);
 
   useEffect(() => {
     if (!geometry) return;
@@ -126,14 +115,7 @@ function StlModel({
   );
 }
 
-interface ModelProps {
-  url: string;
-  color?: string;
-  roughness?: number;
-  metalness?: number;
-}
-
-function Model({ url, color, roughness, metalness }: ModelProps) {
+function Model({ url, color, roughness, metalness }) {
   const isStl = url.toLowerCase().endsWith(".stl");
   if (isStl) {
     return (
@@ -150,7 +132,27 @@ function Model({ url, color, roughness, metalness }: ModelProps) {
 
 function Loader() {
   const { progress } = useProgress();
-  const roundedProgress = Math.round(progress);
+  const [smoothProgress, setSmoothProgress] = useState(0);
+
+  useEffect(() => {
+    let animationFrameId;
+    const update = () => {
+      setSmoothProgress((prev) => {
+        if (prev < progress) {
+          // Increment speed is proportional to remaining progress to create a smooth ease-out effect
+          const speed = Math.max(1, (progress - prev) * 0.1);
+          const next = prev + speed;
+          return next >= progress ? progress : next;
+        }
+        return prev;
+      });
+      animationFrameId = requestAnimationFrame(update);
+    };
+    animationFrameId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [progress]);
+
+  const displayProgress = Math.round(smoothProgress);
 
   return (
     <Html center>
@@ -194,9 +196,10 @@ function Loader() {
             WebkitTextFillColor: "transparent",
             marginBottom: "1rem",
             lineHeight: 1,
+            fontVariantNumeric: "tabular-nums", // Prevents text shaking while digits change
           }}
         >
-          {roundedProgress}%
+          {displayProgress}%
         </span>
         
         {/* Progress Bar Container */}
@@ -213,11 +216,11 @@ function Loader() {
           {/* Animated progress bar fill */}
           <div
             style={{
-              width: `${roundedProgress}%`,
+              width: `${displayProgress}%`,
               height: "100%",
               background: "linear-gradient(90deg, #6d28d9 0%, #a78bfa 100%)",
               boxShadow: "0 0 8px rgba(109, 40, 217, 0.8)",
-              transition: "width 0.2s ease-out",
+              transition: "width 0.1s linear", // Visual stabilizer for requestAnimationFrame updates
             }}
           />
         </div>
@@ -227,20 +230,17 @@ function Loader() {
 }
 
 // WebGL Error Boundary to catch render failures and let the user recover
-class WebGLErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { hasError: boolean; error: Error | null }
-> {
-  constructor(props: { children: React.ReactNode }) {
+class WebGLErrorBoundary extends React.Component {
+  constructor(props) {
     super(props);
     this.state = { hasError: false, error: null };
   }
 
-  static getDerivedStateFromError(error: Error) {
+  static getDerivedStateFromError(error) {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error, errorInfo) {
     console.error("WebGL Error Boundary caught an error:", error, errorInfo);
   }
 
@@ -325,11 +325,6 @@ export default function ModelViewer({
   color,
   roughness,
   metalness,
-}: {
-  modelName: string;
-  color?: string;
-  roughness?: number;
-  metalness?: number;
 }) {
   const modelUrl = modelName.startsWith("/") ? modelName : `/${modelName}`;
 

@@ -54,12 +54,8 @@ export default function Home() {
 
       <section className="content-section">
         <h1 className="title-main">
-          Next-Gen <br />
-          <span className="text-gradient">3D Viewer</span>
+          <span className="text-gradient">Ring 3D Viewer</span>
         </h1>
-        <p className="subtitle">
-          Explore stunning, high-fidelity 3D assets seamlessly. Switch between high-detail GLB models or customize raw STL CAD meshes.
-        </p>
 
         {/* Model Selection List */}
         <div className="section-block">
@@ -120,6 +116,24 @@ export default function Home() {
             </p>
           </div>
         )}
+        {/* Footer */}
+        <footer className="footer-container" style={{ marginTop: "3rem", width: "100%", borderTop: "1px solid rgba(255, 255, 255, 0.1)", paddingTop: "1.5rem" }}>
+          <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+            © {new Date().getFullYear()}{" "}
+            <a
+              href="https://dipnangle.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#fff", textDecoration: "none", fontWeight: "600" }}
+            >
+              dipnangle.com
+            </a>{" "}
+            • Powered by{" "}
+            <span style={{ color: "#fff", fontWeight: "600" }}>
+              genxneuro
+            </span>
+          </p>
+        </footer>
       </section>
 
       <section className="canvas-section">

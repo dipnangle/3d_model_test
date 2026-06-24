@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,16 +11,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Premium 3D Experience",
-  description: "Explore high-fidelity 3D models interactively directly from your browser.",
+export const metadata = {
+  title: "Ring 3D Viewer | dipnangle.com",
+  description: "Interactive Ring 3D Viewer by dipnangle.com, powered by genxneuro.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>{children}</body>
